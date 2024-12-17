@@ -917,6 +917,14 @@ public class NisqAnalyzerControlService {
                     compilationResult.setSimulator(qpu.isSimulator());
                 }
                 compilerAnalysisResults.add(compilationResult);
+            } else {
+                LOG.info("Compiled circuit with depth {} is too deep for QPU {} with T1 {} and max gate time {} or it's to wide with {} qubits in the circuit and {} on the QPU",
+                        circuitInformation.getCircuitDepth(),
+                        qpu.getName(),
+                        qpu.getT1(),
+                        qpu.getMaxGateTime(),
+                        circuitInformation.getCircuitWidth(),
+                        qpu.getQubitCount());
             }
         }
         return compilerAnalysisResults;
