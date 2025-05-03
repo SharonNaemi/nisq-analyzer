@@ -1023,7 +1023,9 @@ public class NisqAnalyzerControlService {
             LOG.debug("No restriction for compilers defined. Using all ({}) supported compilers!",
                 compilersToUse.size());
         }
-
+        String circuit = originalCircuitResult.getCircuit();
+        boolean containsIf = circuit.matches(".*\\bif\\b.*");
+        boolean containsWhile = circuit.matches(".*\\bwhile\\b.*");
         // iterate over all providers listed in QProv for the QPU selection
         for (Provider provider : qProvService.getProviders()) {
 
@@ -1038,6 +1040,14 @@ public class NisqAnalyzerControlService {
 
             // get available QPUs
             List<Qpu> qpus = qProvService.getQPUs(provider);
+            if (containsIf || containsWhile) {
+                // Filter QPUs to only those that support conditional operations
+                qpus = qpus.stream()
+                           .filter(Qpu::isConditional)
+                           .collect(Collectors.toList());
+        
+                LOG.debug("Circuit contains conditional statements. Filtering QPUs to only those that support conditional execution.");
+            }
             LOG.debug("Found {} QPUs from provider '{}'!", qpus.size(), provider.getName());
 
             for (Qpu qpu : qpus) {

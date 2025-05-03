@@ -75,6 +75,10 @@ public class Qpu extends HasId {
 
     @Getter
     @Setter
+    private boolean conditional = false;
+
+    @Getter
+    @Setter
     private String provider;
 
     @Getter
